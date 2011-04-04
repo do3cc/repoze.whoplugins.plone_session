@@ -4,7 +4,7 @@ import unittest
 
 class TestPloneSessionTktPlugin(unittest.TestCase):
     def _getTargetClass(self):
-        from repoze.who.plugins.plonesession_tkt import PloneSessionTktPlugin
+        from repoze.who.plugins.plone_session import PloneSessionTktPlugin
         return PloneSessionTktPlugin
 
     def _makeOne(self, secret='geheim', *args, **kwargs):

@@ -22,6 +22,7 @@ class PloneSessionTktPlugin(object):
 
     # IIDentifier
     def identify(self, environ):
+        import pdb;pdb.set_trace()
         cookies = get_cookies(environ)
         cookie = cookies.get(self.cookie_name)
 
@@ -40,7 +41,7 @@ class PloneSessionTktPlugin(object):
 
         validation = validateTicket(self.secret, tkt, remote_addr,
                                     timeout=self.timeout,
-                                    mod_auth_tkt=self.enhanced_hashing)
+                                    mod_auth_tkt=not self.enhanced_hashing)
         if validation:
             ignore, userid, tokens, user_data, timestamp = validation
         else:
@@ -77,7 +78,7 @@ class PloneSessionTktPlugin(object):
         if old_cookie_value:
             validation = validateTicket(self.secret, old_cookie_value,
                                         remote_addr, timeout=self.timeout,
-                                        mod_auth_tkt=self.enhanced_hashing)
+                                        mod_auth_tkt=not self.enhanced_hashing)
             if validation:
                 ignore, userid, tokens, user_data, timestamp = validation
             else:
@@ -116,6 +117,10 @@ class PloneSessionTktPlugin(object):
             ]
         return cookies
 
+def _bool(value):
+    if isinstance(value, basestring):
+        return value.lower() in ('yes', 'true', '1')
+    return value
 
 def make_plugin(secret=None,
                 cookie_name='auth_tkt',
@@ -132,6 +137,6 @@ def make_plugin(secret=None,
                                    cookie_name,
                                    _bool(include_ip),
                                    timeout,
-                                   bool(enhanced_hashing)
+                                   _bool(enhanced_hashing)
                                    )
     return plugin
