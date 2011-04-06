@@ -22,7 +22,6 @@ class PloneSessionTktPlugin(object):
 
     # IIDentifier
     def identify(self, environ):
-        import pdb;pdb.set_trace()
         cookies = get_cookies(environ)
         cookie = cookies.get(self.cookie_name)
 
