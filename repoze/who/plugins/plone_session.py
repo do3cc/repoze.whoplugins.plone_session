@@ -6,6 +6,7 @@ from repoze.who.interfaces import IIdentifier, IAuthenticator
 from zope.interface import implements
 
 import binascii
+import urllib
 
 
 class PloneSessionTktPlugin(object):
@@ -29,7 +30,7 @@ class PloneSessionTktPlugin(object):
             return None
 
         try:
-            tkt = binascii.a2b_base64(cookie.value)
+            tkt = binascii.a2b_base64(urllib.unquote(cookie.value))
         except binascii.Error:
             return None
 
