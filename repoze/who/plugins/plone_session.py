@@ -6,8 +6,14 @@ from repoze.who.interfaces import IIdentifier, IAuthenticator
 from zope.interface import implements
 
 import binascii
+import datetime
 import urllib
 
+_NOW_TESTING = None
+def _now():
+    if _NOW_TESTING is not None:
+        return _NOW_TESTING
+    return datetime.datetime.now()
 
 class PloneSessionTktPlugin(object):
 
@@ -96,14 +102,24 @@ class PloneSessionTktPlugin(object):
 
     # IAuthenticator
     def authenticate(self, environ, identity):
+        import pdb;pdb.set_trace()
         userid = identity.get('repoze.who.plugins.plone_session_tkt.userid')
         if userid is None:
             return None
         identity['repoze.who.userid'] = userid
         return userid
 
-    def _get_cookies(self, environ, value):
-        max_age = ''
+    def _get_cookies(self, environ, value, max_age=None):
+        if max_age is not None:
+            max_age = int(max_age)
+            later = _now() + datetime.timedelta(seconds=max_age)
+            expires = later.strftime('%a, %d %b %Y %H:%M:%S')
+            # the Expires header is *required* at least for IE7 (IE7 does
+            # not respect Max-Age)
+            max_age = "; Max-Age=%s; Expires=%s" % (max_age, expires)
+        else:
+            max_age = ''
+        secure =''
 
         cur_domain = environ.get('HTTP_HOST', environ.get('SERVER_NAME'))
         wild_domain = '.' + cur_domain
