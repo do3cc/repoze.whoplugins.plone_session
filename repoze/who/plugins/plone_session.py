@@ -102,7 +102,6 @@ class PloneSessionTktPlugin(object):
 
     # IAuthenticator
     def authenticate(self, environ, identity):
-        import pdb;pdb.set_trace()
         userid = identity.get('repoze.who.plugins.plone_session_tkt.userid')
         if userid is None:
             return None
